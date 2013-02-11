@@ -1,0 +1,8 @@
+{
+    "name": "surfnet/serviceregistry",
+    "description": "Surfnet OpenConext service registry",
+    "minimum-stability": "stable",
+    "require-dev": {
+        "lucasvanlierop/php-profiler": "dev-master"
+    }
+}
