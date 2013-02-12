@@ -1,4 +1,22 @@
 <?php
+require_once '../vendor/lucasvanlierop/php-profiler/lib/Profiler.php';
+\Lvl\Profiler::markBootstrapStart();
+bootstrapProfiler();
+
+/**
+ * Initializes profiler
+ */
+function bootstrapProfiler() {
+    $profiler = new \Lvl\Profiler();
+    $profiler->setLogCallback(function($message) {
+        SimpleSAML_Logger::info($message);
+    });
+    $profiler->startBlock('app');
+
+    register_shutdown_function(function() use ($profiler) {
+        $profiler->logReport();
+    });
+}
 
 /* Remove magic quotes. */
 if(get_magic_quotes_gpc()) {
