@@ -263,7 +263,7 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      * is not set or an error occures and the method returns false. If only
      * _eid is set, the newest revision will be fetched.
      *
-     * @return PDOStatement|bool The PDOstatement executed or false in case of error
+     * Note Previously a PDO statement was returned but since it no longer exists and was not used it is removed
      */
     public function load()
     {
@@ -287,35 +287,33 @@ class sspmod_janus_Entity extends sspmod_janus_Database
             return false;
         }
 
-        $st = $this->execute(
-            'SELECT *
-            FROM '. self::$prefix .'entity
-            WHERE `eid` = ? AND `revisionid` = ?;',
-            array($this->_eid, $this->_revisionid)
+        /** @var $entity  sspmod_janus_Model_Entity */
+        $entity = $this->entityManager->find('sspmod_janus_Model_Entity', array(
+            'eid' => $this->_eid,
+            'revisionId' => $this->_revisionid)
         );
 
-        if ($st === false) {
+        if (!$entity instanceof sspmod_janus_Model_Entity) {
             return false;
         }
 
-        $row = $st->fetch(PDO::FETCH_ASSOC);
-        $this->_eid             = $row['eid'];
-        $this->_entityid        = $row['entityid'];
-        $this->_revisionid      = $row['revisionid'];
-        $this->_workflow        = $row['state'];
-        $this->_type            = $row['type'];
-        $this->_expiration      = $row['expiration'];
-        $this->_metadataurl     = $row['metadataurl'];
-        $this->_allowedall      = $row['allowedall'];
-        $this->_parent          = $row['parent'];
-        $this->_revisionnote    = $row['revisionnote'];
-        $this->_arp             = $row['arp'];
-        $this->_user            = $row['user'];
-        $this->_created         = $row['created'];
-        $this->_active          = $row['active'];
-        $this->_manipulation    = $row['manipulation'];
+        $this->_eid             = $entity->getEid();
+        $this->_entityid        = $entity->getEntityid();
+        $this->_revisionid      = $entity->getRevisionid();
+        $this->_workflow        = $entity->getState();
+        $this->_type            = $entity->getType();
+        $this->_expiration      = $entity->getExpiration();
+        $this->_metadataurl     = $entity->getMetadataUrl();
+        $this->_allowedall      = $entity->getAllowedAll();
+        $this->_parent          = $entity->getParent();
+        $this->_revisionnote    = $entity->getRevisionNote();
+        $this->_arp             = $entity->getArp();
+        $this->_user            = $entity->getUser();
+        $this->_created         = $entity->getCreated()->format(DATE_ISO8601);
+        $this->_active          = $entity->getActive();
+        $this->_manipulation    = $entity->getManipulation();
 
-        return $st;
+        return true;
     }
 
 
