@@ -152,24 +152,12 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         }
 
         if (!empty($this->_entityid) && !empty($this->_eid)) {
-            // Get next revisionid
-            $st = $this->execute(
-                'SELECT MAX(`revisionid`) AS maxrevisionid 
-                FROM '. self::$prefix .'entity 
-                WHERE `eid` = ?;',
-                array($this->_eid)
-            );
-
-            if ($st === false) {
-                return false;
+            // Revisions start at one, if revisions already exist increase number
+            $new_revisionid = $this->_entityRepository->getNewestRevision($this->_eid);
+            if ($new_revisionid > 0) {
+                $new_revisionid++;
             }
-            $row = $st->fetchAll(PDO::FETCH_ASSOC);
 
-            if ($row[0]['maxrevisionid'] === null) {
-                $new_revisionid = 0;
-            } else {
-                $new_revisionid = $row[0]['maxrevisionid'] + 1;
-            }
             
             $insertFields = array(
                 'eid'           => $this->_eid,
