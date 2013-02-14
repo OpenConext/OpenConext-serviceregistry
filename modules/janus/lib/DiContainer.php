@@ -67,7 +67,7 @@ class sspmod_janus_DiContainer extends Pimple
             $config = $container->getConfig();
             $dbConfig = $config->getArray('store');
 
-            // @todo make this variable
+            // @todo base this on config
             $isDevMode = true;
 
             // Configure connection
@@ -79,10 +79,11 @@ class sspmod_janus_DiContainer extends Pimple
             );
 
             $doctrineConfig = new \Doctrine\ORM\Configuration();
+
+            // @todo get caching type from config instead of using $isDevMode
             // Configure caching
             if (!$isDevMode && class_exists('Memcache')) {
                 $memcache = new Memcache();
-                // @todo get these values from config
                 $memcache->connect('localhost', 11211);
                 $cacheDriver = new \Doctrine\Common\Cache\MemcacheCache();
                 $cacheDriver->setMemcache($memcache);
