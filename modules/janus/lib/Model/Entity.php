@@ -5,11 +5,7 @@
 /**
  * @Entity
  * @Table(name="janus__entity")
- *
- * //    PRIMARY KEY (`eid`,`revisionid`),
-//    UNIQUE KEY `eid` (`eid`,`revisionid`),
-//    UNIQUE KEY `janus__entity__eid_revisionid` (`
- *
+ * @UniqueConstraint(name="janus__entity__eid_revisionid", columns={"eid","revisionid"})
  */
 class sspmod_janus_Model_Entity {
     /**
@@ -24,6 +20,7 @@ class sspmod_janus_Model_Entity {
     protected  $entityId;
 
     /**
+     * @Id
      * @Column(name="revisionid", type="integer", nullable=false)
      */
     protected  $revisionId;
