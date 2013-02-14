@@ -2,6 +2,10 @@
     "name": "wayf/janus",
     "description": "SimpleSaml php Janus module",
     "minimum-stability": "stable",
+    "require" : {
+        "pimple/pimple" : "dev-master",
+        "doctrine/orm": "*"
+    },
     "require-dev": {
         "lucasvanlierop/php-profiler": "dev-master"
     }
