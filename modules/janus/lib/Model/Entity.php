@@ -91,7 +91,8 @@ class sspmod_janus_Model_Entity {
     protected $user;
 
     /**
-     * @ORM\Column(name="created", length=25, nullable=true)
+     * @ORM\Column(name="created", type="datetime", nullable=true)
+     * @var Datetime
      */
     protected $created;
 
@@ -150,12 +151,15 @@ class sspmod_janus_Model_Entity {
         return $this->arp;
     }
 
-    public function setCreated($created)
+    public function setCreated(DateTime $created)
     {
         $this->created = $created;
         return $this;
     }
 
+    /**
+     * @return Datetime
+     */
     public function getCreated()
     {
         return $this->created;
