@@ -103,9 +103,7 @@ class sspmod_janus_DiContainer extends Pimple
             $eventManager = new \Doctrine\Common\EventManager;
             $eventManager->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
-            $em = EntityManager::create($dbParams, $config, $eventManager);
-
-            return $em;
+            return EntityManager::create($dbParams, $config, $eventManager);
         });
     }
 
