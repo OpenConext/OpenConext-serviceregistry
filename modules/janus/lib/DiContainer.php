@@ -4,7 +4,7 @@ define("JANUS_VENDOR_FOLDER", JANUS_ROOT_FOLDER . '/vendor');
 
 require_once JANUS_VENDOR_FOLDER . "/autoload.php";
 
-use Doctrine\Common\Annotations\SimpleAnnotationReader;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
@@ -93,11 +93,9 @@ class sspmod_janus_DiContainer extends Pimple
         $this[self::ANNOTATION_DRIVER] = $this->share(
             function (sspmod_janus_DiContainer $container)
             {
-                $annotationReader = new SimpleAnnotationReader();
+                $annotationReader = new AnnotationReader();
 
                 AnnotationRegistry::registerFile(JANUS_VENDOR_FOLDER . '/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
-
-                $annotationReader->addNamespace('Doctrine\ORM\Mapping');
 
     // @todo enable caching
     //            $cacheDriver = $this->getCacheDriver();
