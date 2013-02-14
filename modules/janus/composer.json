@@ -1,6 +1,6 @@
 {
-    "name": "surfnet/serviceregistry",
-    "description": "Surfnet OpenConext service registry",
+    "name": "wayf/janus",
+    "description": "SimpleSaml php Janus module",
     "minimum-stability": "stable",
     "require-dev": {
         "lucasvanlierop/php-profiler": "dev-master"
