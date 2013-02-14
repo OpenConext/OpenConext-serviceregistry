@@ -1,5 +1,5 @@
 <?php
-require_once '../vendor/lucasvanlierop/php-profiler/lib/Profiler.php';
+require_once '../modules/janus/vendor/lucasvanlierop/php-profiler/lib/Profiler.php';
 \Lvl\Profiler::markBootstrapStart();
 bootstrapProfiler();
 
