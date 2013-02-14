@@ -109,8 +109,8 @@ class sspmod_janus_Entity extends sspmod_janus_Database
     private $_created;
     private $_active = 'yes';
 
-   /** @var \Doctrine\ORM\EntityRepository */
-    private $_repository;
+    /** @var \Doctrine\ORM\EntityRepository */
+    private $_entityRepository;
 
     /**
      * Create new entity
@@ -132,9 +132,7 @@ class sspmod_janus_Entity extends sspmod_janus_Database
             $this->_getNewEid();
         }
 
-        $this->_entityRepository = sspmod_janus_DiContainer::getInstance()
-            ->getEntityManager()
-            ->getRepository('sspmod_janus_Model_Entity');
+        $this->_entityRepository = $this->entityManager->getRepository('sspmod_janus_Model_Entity');
     }
 
     /**

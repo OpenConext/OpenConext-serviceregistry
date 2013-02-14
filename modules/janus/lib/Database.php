@@ -69,6 +69,11 @@ abstract class sspmod_janus_Database
     protected static $prefix;
 
     /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    protected $entityManager;
+
+    /**
      * Create a new Databse object
      *
      * The constructor takes the configuration and checks that all parameters is
@@ -107,6 +112,8 @@ abstract class sspmod_janus_Database
             self::$_password = $config['password'];
             self::$prefix = $config['prefix'];
         }
+
+        $this->entityManager = sspmod_janus_DiContainer::getInstance()->getEntityManager();
     }
 
     /**
