@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /**
  * @ORM\Entity
  * @ORM\Table(
- *  name="janus__entity",
+ *  name="entity",
  *  uniqueConstraints={
  *      @ORM\UniqueConstraint(
  *          name="janus__entity__eid_revisionid",
@@ -16,6 +16,9 @@ use Doctrine\ORM\Mapping AS ORM;
  *      )
  *  }
  * )
+ *
+ * @todo find out how to get rid of unique constraint which includes 'janus__' prefix. Furthermore there seem to
+ * 2 unique constraints for the same column which in case are the same as the primary key columns...
  */
 class sspmod_janus_Model_Entity {
     /**
