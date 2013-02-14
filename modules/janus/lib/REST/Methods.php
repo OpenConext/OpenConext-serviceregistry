@@ -458,6 +458,10 @@ class sspmod_janus_REST_Methods
      */
     protected static function _getMetadataForEntity(&$entity, $revisionId = NULL, $keys=array())
     {
+        $profiler = \Lvl\Profiler::getInstance();
+        $profiler->startBlock('Get Metadata for entity: ' . $entity->getEntityId());
+
+        // @todo cache this per entity
         $entityController = new sspmod_janus_EntityController(SimpleSAML_Configuration::getConfig('module_janus.php'));
 
         /** @var $entity sspmod_janus_Entity */
@@ -480,6 +484,9 @@ class sspmod_janus_REST_Methods
             $result['disableConsent:' . $entityIndex] = $entityUrl;
         }
 
+        $cacheStore->set('array', $hash, $result);
+        $profiler->endBlock();
+
         return $result;
     }
     
@@ -494,7 +501,13 @@ class sspmod_janus_REST_Methods
      */
     protected static function _getFormattedEntitiesForType($type, $keys=array(), $allowedEntityId=NULL)
     {
+        $profiler = \Lvl\Profiler::getInstance();
+
+        $profiler->startBlock('Get entitites for type: ' . $type);
+
         $entities = self::_getEntitiesForType($type, $allowedEntityId);
+
+        $profiler->endBlock();
         
         $result = array();
         foreach($entities as $entity) {
