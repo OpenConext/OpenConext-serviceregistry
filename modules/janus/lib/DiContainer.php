@@ -68,7 +68,7 @@ class sspmod_janus_DiContainer extends Pimple
             $dbConfig = $config->getArray('store');
 
             // @todo make this variable
-            $isDevMode = false;
+            $isDevMode = true;
 
             // Configure connection
             $dbParams = array(
@@ -79,12 +79,19 @@ class sspmod_janus_DiContainer extends Pimple
             );
 
             $config = new \Doctrine\ORM\Configuration();
-
-            // @todo implement cache
             // Configure caching
-//            $config->setMetadataCacheImpl($cacheDriver);
-//            $config->setQueryCacheImpl($cacheDriver);
-//            $config->setResultCacheImpl($cacheDriver);
+            if (!$isDevMode && class_exists('Memcache')) {
+                $memcache = new Memcache();
+                // @todo get these values from config
+                $memcache->connect('localhost', 11211);
+                $cacheDriver = new \Doctrine\Common\Cache\MemcacheCache();
+                $cacheDriver->setMemcache($memcache);
+            } else {
+                $cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
+            }
+            $config->setMetadataCacheImpl($cacheDriver);
+            $config->setQueryCacheImpl($cacheDriver);
+            $config->setResultCacheImpl($cacheDriver);
 
             // Configure Proxy class generation
             $config->setAutoGenerateProxyClasses((bool) !$isDevMode);
