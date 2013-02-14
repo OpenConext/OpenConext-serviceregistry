@@ -106,9 +106,9 @@ class sspmod_janus_Model_Entity {
     protected $parent;
 
     /**
-     * @ORM\Column(name="revisionnote", type="text")
+     * @ORM\Column(name="revisionNote", type="text")
      */
-    protected $revisionnote;
+    protected $revisionNote;
 
     /**
      * enum('yes','no')
