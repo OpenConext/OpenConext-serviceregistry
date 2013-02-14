@@ -96,7 +96,7 @@ class sspmod_janus_DiContainer extends Pimple
 
             // Configure Proxy class generation
             $doctrineConfig->setAutoGenerateProxyClasses((bool) !$isDevMode);
-            // @todo set correct dir
+            // @todo get from config
             $doctrineConfig->setProxyDir('tmp');
             $doctrineConfig->setProxyNamespace('Proxies');
 
