@@ -153,7 +153,9 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         if (!empty($this->_entityid) && !empty($this->_eid)) {
             // Revisions start at one, if revisions already exist increase number
             $new_revisionid = $this->_entityRepository->getNewestRevision($this->_eid);
-            if ($new_revisionid > 0) {
+            if (is_null($new_revisionid)) {
+                $new_revisionid = 0;
+            } else {
                 $new_revisionid++;
             }
 

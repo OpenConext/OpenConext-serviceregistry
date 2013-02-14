@@ -6,7 +6,7 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
     /**
      * @param int $eid
      * @param null|string $state
-     * @return int
+     * @return null|int
      */
     public function getNewestRevision($eid, $state = null)
     {
@@ -25,7 +25,12 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
             $builder->setParameter('state', $state);
         }
 
-        return (int) $builder->getQuery()->getSingleScalarResult();
+        $newestRevision = $builder->getQuery()->getSingleScalarResult();
+        if (is_null($newestRevision)) {
+            return;
+        }
+
+        return (int) $newestRevision;
     }
 
     /**
