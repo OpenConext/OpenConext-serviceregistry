@@ -238,20 +238,15 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      */
     private function _findEid() {
         if(isset($this->_entityid)) {
-            $st = $this->execute(
-                'SELECT DISTINCT(`eid`) 
-                FROM `'. self::$prefix .'entity` 
-                WHERE `entityid` = ?;',
-                array($this->_entityid)
-            );
-
-            if ($st === false) {
+            try {
+                $eids = $this->_entityRepository->getEid($this->_entityid);
+            } catch (Exception $ex) {
+                // @todo improve error handling, this catch is only here to mimic original behaviour
                 return 'error_db';
             }
 
-            $row = $st->fetchAll(PDO::FETCH_ASSOC);
-            if(count($row) == 1) {
-                $this->_eid = $row[0]['eid'];
+            if(count($eids) == 1) {
+                $this->_eid = $eids[0]['eid'];
             } else {
                 return 'error_entityid_not_unique';
             }

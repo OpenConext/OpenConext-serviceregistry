@@ -43,6 +43,25 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
         $builder->select($builder->expr()->max('Entity.eid'));
         $builder->from('sspmod_janus_Model_Entity', 'Entity');
 
+        // @todo check if null should be returned
         return (int) $builder->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param $entityId
+     * @return int
+     */
+    public function getEid($entityId)
+    {
+        $builder = $this->_em->createQueryBuilder();
+
+        $builder->select('DISTINCT Entity.eid');
+        $builder->from('sspmod_janus_Model_Entity', 'Entity');
+
+        // Filter by entity id
+        $builder->andWhere('Entity.entityId = :entityId');
+        $builder->setParameter('entityId', $entityId);
+
+        return $builder->getQuery()->getScalarResult();
     }
 }
