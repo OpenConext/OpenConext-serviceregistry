@@ -70,8 +70,7 @@ class sspmod_janus_DiContainer extends Pimple
             // @todo make this variable
             $isDevMode = false;
 
-            // @todo make this variable
-            // the connection configuration
+            // Configure connection
             $dbParams = array(
                 'driver'   => 'pdo_mysql',
                 'user'     => $dbConfig['username'],
@@ -80,20 +79,26 @@ class sspmod_janus_DiContainer extends Pimple
             );
 
             $config = new \Doctrine\ORM\Configuration();
+
             // @todo implement cache
+            // Configure caching
 //            $config->setMetadataCacheImpl($cacheDriver);
 //            $config->setQueryCacheImpl($cacheDriver);
 //            $config->setResultCacheImpl($cacheDriver);
+
+            // Configure Proxy class generation
             $config->setAutoGenerateProxyClasses((bool) !$isDevMode);
             // @todo set correct dir
             $config->setProxyDir('tmp');
             $config->setProxyNamespace('Proxies');
 
+            // Configure annotation reader
             $annotationReader = $container->getAnnotationReader();
             $paths = array(JANUS_ROOT_FOLDER  . "/lib/model");
             $driverImpl =  new AnnotationDriver($annotationReader, $paths);
             $config->setMetadataDriverImpl($driverImpl);
 
+            // Configure table name refix
             $tablePrefix = new sspmod_janus_DoctrineExtensions_TablePrefixListener($dbConfig['prefix']);
             $eventManager = new \Doctrine\Common\EventManager;
             $eventManager->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
