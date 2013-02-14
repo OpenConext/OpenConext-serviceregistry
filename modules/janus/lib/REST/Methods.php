@@ -1,6 +1,19 @@
 <?php
 class sspmod_janus_REST_Methods
 {
+
+    /**
+     * @return SimpleSAML_Store
+     */
+    private static function getCacheStore() {
+        static $store;
+        if (!$store instanceof SimpleSAML_Store_Memcache) {
+            $store = SimpleSAML_Store::getInstance();
+        }
+
+        return $store;
+    }
+
     /**
      * Blacklist of methods that are protected (and need authentication to use).
      */
@@ -458,6 +471,14 @@ class sspmod_janus_REST_Methods
      */
     protected static function _getMetadataForEntity(&$entity, $revisionId = NULL, $keys=array())
     {
+        $cacheKey = 'entity-metadata' . md5($entity->getEid() . $revisionId);
+
+        $cacheStore = self::getCacheStore();
+        $result = $cacheStore->get('array', $cacheKey);
+        if (!empty($result)) {
+            return $result;
+        }
+
         $profiler = \Lvl\Profiler::getInstance();
         $profiler->startBlock('Get Metadata for entity: ' . $entity->getEntityId());
 
@@ -484,7 +505,8 @@ class sspmod_janus_REST_Methods
             $result['disableConsent:' . $entityIndex] = $entityUrl;
         }
 
-        $cacheStore->set('array', $hash, $result);
+        // @todo make sure this is flushed on update
+        $cacheStore->set('array', $cacheKey, $result);
         $profiler->endBlock();
 
         return $result;
