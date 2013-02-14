@@ -78,7 +78,7 @@ class sspmod_janus_DiContainer extends Pimple
                 'dbname'   => $dbConfig['dsn'],
             );
 
-            $config = new \Doctrine\ORM\Configuration();
+            $doctrineConfig = new \Doctrine\ORM\Configuration();
             // Configure caching
             if (!$isDevMode && class_exists('Memcache')) {
                 $memcache = new Memcache();
@@ -89,28 +89,28 @@ class sspmod_janus_DiContainer extends Pimple
             } else {
                 $cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
             }
-            $config->setMetadataCacheImpl($cacheDriver);
-            $config->setQueryCacheImpl($cacheDriver);
-            $config->setResultCacheImpl($cacheDriver);
+            $doctrineConfig->setMetadataCacheImpl($cacheDriver);
+            $doctrineConfig->setQueryCacheImpl($cacheDriver);
+            $doctrineConfig->setResultCacheImpl($cacheDriver);
 
             // Configure Proxy class generation
-            $config->setAutoGenerateProxyClasses((bool) !$isDevMode);
+            $doctrineConfig->setAutoGenerateProxyClasses((bool) !$isDevMode);
             // @todo set correct dir
-            $config->setProxyDir('tmp');
-            $config->setProxyNamespace('Proxies');
+            $doctrineConfig->setProxyDir('tmp');
+            $doctrineConfig->setProxyNamespace('Proxies');
 
             // Configure annotation reader
             $annotationReader = $container->getAnnotationReader();
             $paths = array(JANUS_ROOT_FOLDER  . "/lib/model");
             $driverImpl =  new AnnotationDriver($annotationReader, $paths);
-            $config->setMetadataDriverImpl($driverImpl);
+            $doctrineConfig->setMetadataDriverImpl($driverImpl);
 
             // Configure table name refix
             $tablePrefix = new sspmod_janus_DoctrineExtensions_TablePrefixListener($dbConfig['prefix']);
             $eventManager = new \Doctrine\Common\EventManager;
             $eventManager->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
-            return EntityManager::create($dbParams, $config, $eventManager);
+            return EntityManager::create($dbParams, $doctrineConfig, $eventManager);
         });
     }
 
