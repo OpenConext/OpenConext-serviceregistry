@@ -4,8 +4,18 @@
 
 /**
  * @Entity
- * @Table(name="janus__entity")
- * @UniqueConstraint(name="janus__entity__eid_revisionid", columns={"eid","revisionid"})
+ * @Table(
+ *  name="janus__entity",
+ *  uniqueConstraints={
+ *      @UniqueConstraint(
+ *          name="janus__entity__eid_revisionid",
+ *          columns={
+ *              "eid",
+ *              "revisionid"
+ *          }
+ *      )
+ *  }
+ * )
  */
 class sspmod_janus_Model_Entity {
     /**
