@@ -27,4 +27,17 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
 
         return (int) $builder->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * @return int
+     */
+    public function getNewestEid()
+    {
+        $builder = $this->_em->createQueryBuilder();
+
+        $builder->select($builder->expr()->max('Entity.eid'));
+        $builder->from('sspmod_janus_Model_Entity', 'Entity');
+
+        return (int) $builder->getQuery()->getSingleScalarResult();
+    }
 }
