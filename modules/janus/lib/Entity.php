@@ -140,10 +140,9 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      *
      * Method for saving the entity data to the database. If the entity data have
      * not been modified since last load, the method returns true without saving.
-     * Method return false if an error has occured otherwise it will return the
-     * PDOstatement executed.
+     * Method return false if an error has occured
      *
-     * @return PDOStatement|bool Returns the statement on success.
+     * Note Previously a PDO statement was returned but since it no longer exists and was not used it is removed
      */
     public function save()
     {
@@ -158,35 +157,27 @@ class sspmod_janus_Entity extends sspmod_janus_Database
                 $new_revisionid++;
             }
 
-            
-            $insertFields = array(
-                'eid'           => $this->_eid,
-                'entityid'      => $this->_entityid,
-                'revisionid'    => $new_revisionid,
-                'state'         => $this->_workflow,
-                'type'          => $this->_type,
-                'expiration'    => $this->_expiration,
-                'metadataurl'   => $this->_metadataurl,
-                'allowedall'    => $this->_allowedall,
-                'arp'           => $this->_arp,
-                'manipulation'  => $this->_manipulation,
-                'user'          => $this->_user,
-                'created'       => date('c'),
-                'ip'            => $_SERVER['REMOTE_ADDR'],
-                'parent'        => $this->_parent,
-                'active'        => $this->_active,
-                'revisionnote'  => $this->_revisionnote,
-            );
+            // @todo see if this can be replaced this with a clone in the future
+            $newEntity = new sspmod_janus_Model_Entity;
+            $newEntity->setEid($this->_eid);
+            $newEntity->setEntityid($this->_entityid);
+            $newEntity->setRevisionid($new_revisionid);
+            $newEntity->setState($this->_workflow);
+            $newEntity->setType($this->_type);
+            $newEntity->setExpiration($this->_expiration);
+            $newEntity->setMetadataurl($this->_metadataurl);
+            $newEntity->setAllowedall($this->_allowedall);
+            $newEntity->setArp($this->_arp);
+            $newEntity->setManipulation($this->_manipulation);
+            $newEntity->setUser($this->_user);
+            $newEntity->setCreated(new \DateTime());
+            $newEntity->setIp($_SERVER['REMOTE_ADDR']);
+            $newEntity->setParent($this->_parent);
+            $newEntity->setActive($this->_active);
+            $newEntity->setRevisionnote($this->_revisionnote);
 
-            $tableName = self::$prefix . 'entity';
-            $insertQuery = "INSERT INTO $tableName (" . implode(',', array_keys($insertFields)) . ') '.
-                'VALUES (' . str_repeat('?,', count($insertFields)-1) . '?)';
-
-            $st = $this->execute($insertQuery, array_values($insertFields));
-
-            if ($st === false) {
-                return false;
-            }
+            $this->entityManager->persist($newEntity);
+            $this->entityManager->flush();
 
             $this->_revisionid = $new_revisionid;
 
@@ -194,7 +185,6 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         } else {
             return false;
         }
-        return $st;
     }
 
     /**
