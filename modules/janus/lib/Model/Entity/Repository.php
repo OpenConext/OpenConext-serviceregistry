@@ -15,7 +15,7 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
         $builder->select($builder->expr()->max('Entity.revisionId'));
         $builder->from('sspmod_janus_Model_Entity', 'Entity');
 
-        // Filter by entity id
+        // Filter by eid
         $builder->andWhere('Entity.eid = :eid');
         $builder->setParameter('eid', $eid);
 
