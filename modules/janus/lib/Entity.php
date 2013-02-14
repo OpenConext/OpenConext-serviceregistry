@@ -109,7 +109,7 @@ class sspmod_janus_Entity extends sspmod_janus_Database
     private $_created;
     private $_active = 'yes';
 
-    /** @var \Doctrine\ORM\EntityRepository */
+    /** @var sspmod_janus_Model_Entity_Repository */
     private $_entityRepository;
 
     /**
