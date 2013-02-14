@@ -94,7 +94,6 @@ class sspmod_janus_DiContainer extends Pimple
             $driverImpl =  new AnnotationDriver($annotationReader, $paths);
             $config->setMetadataDriverImpl($driverImpl);
 
-            // @todo get prefix from config
             $tablePrefix = new sspmod_janus_DoctrineExtensions_TablePrefixListener($dbConfig['prefix']);
             $eventManager = new \Doctrine\Common\EventManager;
             $eventManager->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
