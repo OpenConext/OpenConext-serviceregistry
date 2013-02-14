@@ -3,7 +3,7 @@
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="sspmod_janus_Model_Entity_Repository")
  * @ORM\Table(
  *  name="entity",
  *  uniqueConstraints={

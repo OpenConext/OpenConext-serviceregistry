@@ -109,6 +109,9 @@ class sspmod_janus_Entity extends sspmod_janus_Database
     private $_created;
     private $_active = 'yes';
 
+   /** @var \Doctrine\ORM\EntityRepository */
+    private $_repository;
+
     /**
      * Create new entity
      *
@@ -128,6 +131,10 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         if ($new) {
             $this->_getNewEid();
         }
+
+        $this->_entityRepository = sspmod_janus_DiContainer::getInstance()
+            ->getEntityManager()
+            ->getRepository('sspmod_janus_Model_Entity');
     }
 
     /**
@@ -236,29 +243,11 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      */
     private function _newestRevision($state = null)
     {
-        if(is_null($state)) {
-            $st = $this->execute(
-                'SELECT MAX(`revisionid`) AS maxrevisionid 
-                FROM '. self::$prefix .'entity 
-                WHERE `eid` = ?;',
-                array($this->_eid)
-            );
-        } else {
-            $st = $this->execute(
-                'SELECT MAX(`revisionid`) AS maxrevisionid 
-                FROM '. self::$prefix .'entity 
-                WHERE `eid` = ? AND `state` = ?;',
-                array($this->_eid, $state)
-            );
-        
-        }
+        $newestRevision = $this->_entityRepository->getNewestRevision($this->_eid, $state);
 
-        if (is_object($st)) {
-            $row = $st->fetchAll(PDO::FETCH_ASSOC);
-            if (is_numeric($row[0]['maxrevisionid'])) {
-                $this->_revisionid = $row[0]['maxrevisionid'];
-                return $this->_revisionid;
-            }
+        if (is_numeric($newestRevision)) {
+            $this->_revisionid = $newestRevision;
+            return $this->_revisionid;
         }
 
         throw new Exception(
