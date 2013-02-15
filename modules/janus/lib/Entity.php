@@ -631,25 +631,23 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         $metadatafields = $mb->getMetadatafields();
 
         if(!is_null($fieldname)) {
-            $st = $this->execute('
-                SELECT t1.value AS value
-                FROM '. self::$prefix .'metadata AS t1
-                WHERE t1.eid = ? AND t1.key = ? AND t1.revisionid = ?;',
-                array($this->_eid, $fieldname, $this->_revisionid)
-            );
 
-            if ($st === false) {
-                return false;
-            }
+            $metadata = $this->entityManager
+                ->getRepository('sspmod_janus_Model_Entity_Metadata')
+                ->findOneBy(
+                    array(
+                        'eid' => $this->_eid,
+                        'key' => $fieldname,
+                        'revisionId' => $this->_revisionid
+                    )
+                );
 
-            $rows = $st->fetchAll(PDO::FETCH_ASSOC);
-
-            if(empty($rows)) {
+            if(!$metadata instanceof sspmod_janus_Model_Entity_Metadata) {
                 $this->_prettyname =  $this->_entityid;
-            } else if(isset($metadatafields[$fieldname]->default) && $metadatafields[$fieldname]->default == $rows[0]['value']) {
+            } else if(isset($metadatafields[$fieldname]->default) && $metadatafields[$fieldname]->default == $metadata->getValue()) {
                 $this->_prettyname =  $this->_entityid; 
             } else {
-                $this->_prettyname = $rows[0]['value'];
+                $this->_prettyname = $metadata->getValue();
             }
         } else {
             $this->_prettyname =  $this->_entityid;
