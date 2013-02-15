@@ -24,6 +24,7 @@ class sspmod_janus_Model_Entity_Metadata
      * @ORM\Id
      * @ORM\Column(name="eid", type="integer", nullable=false)
      * @var int
+     * @todo rename to eId
      */
     protected  $eid;
     
