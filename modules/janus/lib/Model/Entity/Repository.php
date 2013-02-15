@@ -64,4 +64,24 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
 
         return $builder->getQuery()->getScalarResult();
     }
+
+    /**
+     * Get nr of revisions for a given entity by eid
+     *
+     * @param $eid
+     * @return int
+     */
+    public function getHistorySize($eid)
+    {
+        $builder = $this->_em->createQueryBuilder();
+
+        $builder->select($builder->expr()->count('Entity'));
+        $builder->from('sspmod_janus_Model_Entity', 'Entity');
+
+        // Filter by eid
+        $builder->andWhere('Entity.eid = :eid');
+        $builder->setParameter('eid', $eid);
+
+        return (int) $builder->getQuery()->getSingleScalarResult();
+    }
 }

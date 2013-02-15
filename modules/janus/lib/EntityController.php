@@ -505,24 +505,9 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
     {
         assert('$this->_entity instanceof Sspmod_Janus_Entity');
 
-        $st = $this->execute(
-            'SELECT COUNT(*) as size
-            FROM ' . self::$prefix . 'entity
-            WHERE `eid` = ?',
-            array($this->_entity->getEid())
-        );
-
-        if ($st === false) {
-            return false;
-        }
-
-        $rs = $st->fetchAll(PDO::FETCH_ASSOC);
-        $size = 0;
-        foreach ($rs as $data) {
-            $size = $data['size'];
-        }
-
-        return $size;
+        return $this->entityManager
+            ->getRepository('sspmod_janus_Model_Entity')
+            ->getHistorySize($this->_entity->getEid());
     }
 
     /**
