@@ -1715,6 +1715,7 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
             return false;
         }
 
+        $validUntil = $entityModel->getMetadataValidUntil();
         $cacheUntil = $entityModel->getMetadataCacheUntil();
 
         return array(
