@@ -68,6 +68,7 @@ if (   (array_key_exists($userid, $allowedUsers)
     || $uiguard->hasPermission('allentities', null, $user->getType(), true)) 
     && $uiguard->hasPermission('entityhistory', $wfstate, $user->getType())
 ) {
+    // @todo find out why max history is also used as upper limit
     $history_size = $mcontroller->getHistorySize();
     $history      = $mcontroller->getHistory(10, $history_size);
 
