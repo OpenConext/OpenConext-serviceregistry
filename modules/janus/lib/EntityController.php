@@ -1697,23 +1697,29 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
     public function getMetadataCaching()
     {
         $currentEntity = $this->getEntity();
-        $st = $this->execute(
-            'SELECT metadata_valid_until, metadata_cache_until
-            FROM '. self::$prefix .'entity
-            WHERE `eid` = ? AND `revisionid` = ?;',
-            array($currentEntity->getEid(), $currentEntity->getRevisionid())
-        );
 
-        if ($st === false) {
+        try {
+            /** @var $entityModel sspmod_janus_Model_Entity */
+            $entityModel = $this->entityManager->getRepository('sspmod_janus_Model_Entity')
+                ->findOneBy(
+                    array(
+                        'eid' => $currentEntity->getEid(),
+                        'revisionId' => $currentEntity->getRevisionid()
+                    )
+                );
+        } catch (Exception $ex) {
+            // @todo improve exception this is just to mimic original behaviour
             SimpleSAML_Logger::error(
                 'JANUS:EntityController:_loadMetadata - Metadata could not load.'
             );
             return false;
         }
-        $rs = $st->fetchAll(PDO::FETCH_ASSOC);
+
+        $cacheUntil = $entityModel->getMetadataCacheUntil();
+
         return array(
-            'validUntil' => strtotime($rs[0]['metadata_valid_until']),
-            'cacheUntil' => strtotime($rs[0]['metadata_cache_until'])
+            'validUntil' => ($validUntil instanceof DateTime) ? $validUntil->getTimestamp() : null,
+            'cacheUntil' => ($cacheUntil instanceof DateTime) ? $cacheUntil->getTimestamp() : null,
         );
     }
 
