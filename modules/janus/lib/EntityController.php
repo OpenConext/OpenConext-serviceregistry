@@ -464,43 +464,27 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
     {
         assert('$this->_entity instanceof Sspmod_Janus_Entity');
 
-        if ($lower_limit !== null || $upper_limit !== null) {
-            $limit_clause = ' LIMIT';
-            if ($lower_limit !== null) {
-                $limit_clause = $limit_clause . ' ' . $lower_limit;
-            }
-            if ($upper_limit !== null) {
-                $separator = $limit_clause === null ? ' ' : ', ';
-                $limit_clause = $limit_clause . $separator . $upper_limit;
-            }
-        } else {
-            $limit_clause = '';
-        }
-
-        $st = $this->execute(
-            'SELECT * 
-            FROM '. self::$prefix .'entity 
-            WHERE `eid` = ? 
-            ORDER BY `revisionid` DESC' . $limit_clause,
-            array($this->_entity->getEid())
-        );
-
-        if ($st === false) {
-            return false;
-        }
-
-        $rs = $st->fetchAll(PDO::FETCH_ASSOC);
+        $entities = $this->entityManager
+            ->getRepository('sspmod_janus_Model_Entity')
+            ->findBy(
+                array ('eid' => $this->_entity->getEid()),
+                array('revisionId' => 'DESC'),
+                $upper_limit,
+                $lower_limit
+            );
 
         $history = array();
-        foreach ($rs AS $data) {
+        /** @var $entityModel sspmod_janus_Model_Entity */
+        foreach ($entities AS $entityModel) {
+            // @todo simplify this a lot by merging both entity models, now model gets instatiated several times
             $entity = new sspmod_janus_Entity($this->_config);
             $entity->setEid($this->_entity->getEid());
-            $entity->setRevisionid($data['revisionid']);
+            $entity->setRevisionid($entityModel->getRevisionId());
             if (!$entity->load()) {
                 SimpleSAML_Logger::error(
                     'JANUS:EntityController:getHistory - Entity could not '
                     . 'load. Eid: '. $this->_entity->getEntityid() . ' - Rid: '
-                    . $data['revisionid']
+                    . $entityModel->getRevisionId()
                 );
                 return false;
             }
