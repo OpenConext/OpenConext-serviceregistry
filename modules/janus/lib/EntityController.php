@@ -1729,20 +1729,31 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
      *
      * @param int $validUntil Unix timestamp
      * @param int $cacheUntil Unix timestamp
-     * @return bool Succeeded?
+     * @return bool true. if updating fails an exception will be raised
      */
     public function setMetadataCaching($validUntil, $cacheUntil)
     {
-        $currentEntity = $this->getEntity();
-        $query = 'UPDATE '. self::$prefix .'entity
-            SET metadata_valid_until = ?, metadata_cache_until = ?
-            WHERE `eid` = ? AND `revisionid` = ?;';
-        $params = array(
-            date('Y-m-d H:i:s', $validUntil),
-            date('Y-m-d H:i:s', $cacheUntil),
-            $currentEntity->getEid(),
-            $currentEntity->getRevisionid()
+        /** @var $entityModel sspmod_janus_Model_Entity */
+        $entityModel = $this->entityManager->getRepository('sspmod_janus_Model_Entity')
+            ->findOneBy(
+            array(
+                'eid' => $this->_entity->getEid(),
+                'revisionId' => $this->_entity->getRevisionid()
+            )
         );
-        return (bool)$this->execute($query, $params);
+
+        // @todo it would be easier if this method receives datetime objects
+        $validUntilDateTime = new DateTime();
+        $validUntilDateTime->setTimestamp($validUntil);
+        $entityModel->setMetadataValidUntil($validUntilDateTime);
+
+        $cacheUntilDateTime = new DateTime();
+        $cacheUntilDateTime->setTimestamp($cacheUntil);
+        $entityModel->setMetadataCacheUntil($cacheUntilDateTime);
+        
+        $this->entityManager->persist($entityModel);
+        $this->entityManager->flush();
+
+        return true;
     }
 }
