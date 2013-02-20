@@ -1,19 +1,6 @@
 <?php
 class sspmod_janus_REST_Methods
 {
-
-    /**
-     * @return SimpleSAML_Store
-     */
-    private static function getCacheStore() {
-        static $store;
-        if (!$store instanceof SimpleSAML_Store_Memcache) {
-            $store = SimpleSAML_Store::getInstance();
-        }
-
-        return $store;
-    }
-
     /**
      * Blacklist of methods that are protected (and need authentication to use).
      */
@@ -469,20 +456,34 @@ class sspmod_janus_REST_Methods
      * @param array $keys
      * @return array|bool
      */
-    protected static function _getMetadataForEntity(&$entity, $revisionId = NULL, $keys=array())
+    protected static function _getMetadataForEntity(sspmod_janus_Entity &$entity, $revisionId = NULL, $keys=array())
     {
-        $cacheKey = 'entity-metadata' . md5($entity->getEid() . $revisionId);
+        $cacheStore = SimpleSAML_Store::getInstance();
 
-        $cacheStore = self::getCacheStore();
-        $result = $cacheStore->get('array', $cacheKey);
-        if (!empty($result)) {
-            return $result;
+        // Only cache when memcache is configured, for caching in session does not work with REST
+        // and caching database results in a database is pointless
+        $useCache = false;
+        if($cacheStore instanceof SimpleSAML_Store_Memcache) {
+            $useCache = true;
+        }
+
+        if ($useCache) {
+            // Make sure revision id is always set so it the cache key will be correct
+            if (is_null($revisionId)) {
+                $revisionId = $entity->getRevisionid();
+            }
+
+            // Try to get result from fache
+            $cacheKey = 'entity-metadata-' . $entity->getEid() . '-' . $revisionId;
+            $result = $cacheStore->get('array', $cacheKey);
+            if (!empty($result)) {
+                return $result;
+            }
         }
 
         $profiler = \Lvl\Profiler::getInstance();
         $profiler->startBlock('Get Metadata for entity: ' . $entity->getEntityId());
 
-        // @todo cache this per entity
         $entityController = new sspmod_janus_EntityController(SimpleSAML_Configuration::getConfig('module_janus.php'));
 
         /** @var $entity sspmod_janus_Entity */
@@ -505,9 +506,11 @@ class sspmod_janus_REST_Methods
             $result['disableConsent:' . $entityIndex] = $entityUrl;
         }
 
-        // @todo make sure this is flushed on update
-        $cacheStore->set('array', $cacheKey, $result);
-        $profiler->endBlock();
+        if ($useCache) {
+            // Store metadata in cache, note that this does not have to be flushed since a new revision
+            // will trigger a new version of the cache anyway
+            $cacheStore->set('array', $cacheKey, $result);
+        }
 
         return $result;
     }
