@@ -1,2 +1,3 @@
--- Profiling / doctrine test, convert created to a proper datetime field
-ALTER TABLE `janus__entity` CHANGE COLUMN `created` `created` DATETIME DEFAULT NULL;
+-- Add index for allowed and blocked entities to improve performance (created by Geert vd Ploeg)
+ALTER TABLE janus__blockedEntity ADD index `eid_revision` (eid, revisionid);
+ALTER TABLE janus__allowedEntity ADD index `eid_revision` (eid, revisionid);
