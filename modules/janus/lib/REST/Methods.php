@@ -5,8 +5,8 @@ class sspmod_janus_REST_Methods
     public static function mapMetadataKeys()
     {
         return array (
-            "keyword:en" => "UIInfo:Keyword:en",
-            "keyword:nl" => "UIInfo:Keyword:nl",
+            "keywords:en" => "UIInfo:Keywords:en",
+            "keywords:nl" => "UIInfo:Keywords:nl",
             "logo:0:url" => "UIInfo:Logo:0:url",
             "logo:0:width" => "UIInfo:Logo:0:width",
             "logo:0:height" => "UIInfo:Logo:0:height",
