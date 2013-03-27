@@ -12,6 +12,21 @@ define('JANUS_FIELDS_TYPE_SP'  , 'saml20-sp');
  *      default_allow = FALSE (unless you set a default, in which case this is TRUE by default)
  */
 
+$samlBindings = array(
+    'urn:oasis:names:tc:SAML:2.0:profiles:holder-of-key:SSO:browser',
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+    'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
+    'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
+    // URI is not defined anywhere as binding? 
+    'urn:oasis:names:tc:SAML:2.0:bindings:URI',
+    'urn:oasis:names:tc:SAML:1.0:profiles:artifact-01',
+    'urn:oasis:names:tc:SAML:1.0:profiles:browser-post',
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign'
+);
+
+
 $template = array(
     // Fields for ALL entities (both Service Provider and Identity Provider)
     JANUS_FIELDS_TYPE_ALL => array(
@@ -67,14 +82,7 @@ $template = array(
         // Endpoint fields
         'SingleSignOnService:0:Binding' => array(
             'type' => 'select',
-            'select_values' => array(
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
-                'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
-                'urn:oasis:names:tc:SAML:2.0:bindings:URI'
-            ),
+            'select_values' => $samlBindings,
             'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
             'required' => TRUE,
         ),
@@ -104,28 +112,13 @@ $template = array(
         # Must have at least 1 binding
         'AssertionConsumerService:0:Binding' => array(
             'type' => 'select',
-            'select_values' => array(
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
-                'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
-                'urn:oasis:names:tc:SAML:2.0:bindings:URI'
-            ),
+            'select_values' => $samlBindings,
             'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             'required' => TRUE,
         ),
         'AssertionConsumerService:#:Binding' => array(
             'type' => 'select',
-            'select_values' => array(
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
-                'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
-                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
-                'urn:oasis:names:tc:SAML:2.0:bindings:URI'
-
-            ),
+            'select_values' => $samlBindings,
             'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             'required' => FALSE,
             'supported' => array(1,2,3,4,5,6,7,8,9),
