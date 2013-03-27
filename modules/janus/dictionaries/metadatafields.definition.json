@@ -164,16 +164,16 @@
     "coin_provide_is_member_of": {
         "en": "Provide SAML attribute isMemberOf containing all groups a person is a member of (note: resource intensive depending on number of groups)"
     },
-    "logo_url": {
+    "UIInfo_Logo_url": {
         "en": "The URL of the IDPs logo image. This URL must be accessible from the public internet."
     },
-    "logo_width": {
+    "UIInfo_Logo_width": {
         "en": "The width of the IDPs logo image. Cannot be wider then 108px for SURFconext. Required for MDUI export."
     },
-    "logo_height": {
+    "UIInfo_Logo_height": {
         "en": "The height of the IDPs logo image. Cannot be higher then 48px for SURFconext. Required for MDUI export."
     },
-    "keywords": {
+    "UIInfo_Keywords": {
         "en": "Space separated list of keywords users can search on in the WAYF screen"
     }
 }
