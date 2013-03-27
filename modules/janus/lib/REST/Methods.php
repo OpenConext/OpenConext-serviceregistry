@@ -1,6 +1,25 @@
 <?php
 class sspmod_janus_REST_Methods
 {
+
+    public static function mapMetadataKeys()
+    {
+        return array (
+            "keyword:en" => "UIInfo:Keyword:en",
+            "keyword:nl" => "UIInfo:Keyword:nl",
+            "logo:0:url" => "UIInfo:Logo:0:url",
+            "logo:0:width" => "UIInfo:Logo:0:width",
+            "logo:0:height" => "UIInfo:Logo:0:height",
+            "displayName:en" => "UIInfo:DisplayName:en",
+            "displayName:nl" => "UIInfo:DisplayName:nl"
+        );
+    }
+
+    public static function mapMetadataKeysReverse()
+    {
+        return array_combine(array_values(self::mapMetadataKeys()), array_keys(self::mapMetadataKeys()));
+    }
+
     /**
      * Blacklist of methods that are protected (and need authentication to use).
      */
@@ -483,10 +502,25 @@ class sspmod_janus_REST_Methods
 
         $metadata = $entityController->getMetadata();
 
+        // in case we ask for some keys... we need to apply the key mapping
+        $keys = array_map(function($key) {
+            $mapping = self::mapMetadataKeys();
+            return array_key_exists($key, $mapping) ? $mapping[$key] : $key;
+        }, $keys);
+
         $result = array();
         foreach($metadata AS $meta) {;
             if (count($keys) == 0 || in_array($meta->getKey(), $keys)) {
                 $result[$meta->getKey()] = $meta->getValue();
+            }
+        }
+
+        // in case we asked for *all* keys, we need to apply the reverse
+        // mapping and make the old keys available as well...
+        $reverseMapping = self::mapMetadataKeysReverse();
+        foreach($reverseMapping as $k => $v) {
+            if(array_key_exists($k, $result)) {
+                $result[$v] = $result[$k];
             }
         }
 
