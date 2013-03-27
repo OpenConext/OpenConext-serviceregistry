@@ -31,7 +31,8 @@ $template = array(
     // Fields for ALL entities (both Service Provider and Identity Provider)
     JANUS_FIELDS_TYPE_ALL => array(
         'name:#'                    => array('required'=>TRUE, 'supported' => array('en', 'nl')),
-        'displayName:#'             => array(                  'supported' => array('en', 'nl')),
+        'UIInfo:DisplayName:#'             => array(                  'supported' => array('en', 'nl')),
+	'UIInfo:Description:#'	=> array('supported' => array('en','nl')),
         'description:#'             => array('required'=>TRUE, 'supported' => array('en', 'nl')),
 
         'certData'                  => array(),
@@ -65,9 +66,9 @@ $template = array(
         'OrganizationName:#'        => array(                    'supported' => array('en', 'nl')),
         'OrganizationDisplayName:#' => array(                    'supported' => array('en', 'nl')),
         'OrganizationURL:#'         => array('validate' => 'isurl', 'supported' => array('en', 'nl')),
-        'logo:0:url'    => array('required' => TRUE, 'default' => 'https://.png', 'default_allow' => FALSE),
-        'logo:0:width'  => array('required' => TRUE, 'default' => '120'),
-        'logo:0:height' => array('required' => TRUE, 'default' => '60'),
+        'UIInfo:Logo:0:url'    => array('required' => TRUE, 'default' => 'https://.png', 'default_allow' => FALSE),
+        'UIInfo:Logo:0:width'  => array('required' => TRUE, 'default' => '120'),
+        'UIInfo:Logo:0:height' => array('required' => TRUE, 'default' => '60'),
 
         'redirect.sign' => array('type' => 'boolean', 'required' => TRUE, 'default' => FALSE),
 
@@ -98,7 +99,7 @@ $template = array(
         'coin:schachomeorganization' => array(),
 
         // MDUI stuff
-        'keywords:#'    => array('required' => TRUE, 'supported'=>array('en','nl')),
+        'UIInfo:Keywords:#'    => array('required' => TRUE, 'supported'=>array('en','nl')),
 
         // Institution
         'coin:institution_id' => array(),

@@ -671,6 +671,15 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
             unset($parsedmetadata['entityid']);
         }
 
+        // flatten UIInfo:Keywords:$lang to space separated list per language
+        if (array_key_exists("UIInfo", $parsedmetadata) && array_key_exists("Keywords", $parsedmetadata['UIInfo']) && is_array($parsedmetadata['UIInfo']['Keywords'])) {
+                foreach ($parsedmetadata['UIInfo']['Keywords'] as $lang => $value) {
+                        if (is_array($value)) {
+                                $parsedmetadata['UIInfo']['Keywords'][$lang] = implode(" ", $value);
+                        }
+                }
+        }
+
         $parsedmetadata = self::arrayFlattenSep(':', $parsedmetadata);
 
         if (isset($parsedmetadata['keys:0:X509Certificate'])) {
@@ -881,6 +890,15 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
             return 'error_entityid_no_match';	
         } else {
             unset($parsedmetadata['entityid']);
+        }
+
+        // flatten UIInfo:Keywords:$lang to space separated list per language
+        if (array_key_exists("UIInfo", $parsedmetadata) && array_key_exists("Keywords", $parsedmetadata['UIInfo']) && is_array($parsedmetadata['UIInfo']['Keywords'])) {
+                foreach ($parsedmetadata['UIInfo']['Keywords'] as $lang => $value) {
+                        if (is_array($value)) {
+                                $parsedmetadata['UIInfo']['Keywords'][$lang] = implode(" ", $value);
+                        }
+                }
         }
 
         $parsedmetadata = self::arrayFlattenSep(':', $parsedmetadata);
