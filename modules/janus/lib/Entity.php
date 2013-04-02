@@ -109,9 +109,6 @@ class sspmod_janus_Entity extends sspmod_janus_Database
     private $_created;
     private $_active = 'yes';
 
-    /** @var sspmod_janus_Model_Entity_Repository */
-    private $_entityRepository;
-
     /**
      * Create new entity
      *
@@ -127,8 +124,6 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         parent::__construct($config->getValue('store'));
         $this->_config = $config;
 
-        $this->_entityRepository = $this->entityManager->getRepository('sspmod_janus_Model_Entity');
-
         // If entity is new, get new eid
         if ($new) {
             $this->_getNewEid();
@@ -140,9 +135,10 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      *
      * Method for saving the entity data to the database. If the entity data have
      * not been modified since last load, the method returns true without saving.
-     * Method return false if an error has occured
+     * Method return false if an error has occured otherwise it will return the
+     * PDOstatement executed.
      *
-     * Note Previously a PDO statement was returned but since it no longer exists and was not used it is removed
+     * @return PDOStatement|bool Returns the statement on success.
      */
     public function save()
     {
@@ -151,35 +147,41 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         }
 
         if (!empty($this->_entityid) && !empty($this->_eid)) {
-            // Revisions start at one, if revisions already exist increase number
-            $new_revisionid = $this->_entityRepository->getNewestRevision($this->_eid);
-            if (is_null($new_revisionid)) {
+            $new_revisionid = $this->_loadNewestRevisionFromDatabase($this->_eid);
+            if ($new_revisionid === null) {
                 $new_revisionid = 0;
             } else {
-                $new_revisionid++;
+                $new_revisionid = $new_revisionid + 1;
             }
+            
+            $insertFields = array(
+                'eid'           => $this->_eid,
+                'entityid'      => $this->_entityid,
+                'revisionid'    => $new_revisionid,
+                'state'         => $this->_workflow,
+                'type'          => $this->_type,
+                'expiration'    => $this->_expiration,
+                'metadataurl'   => $this->_metadataurl,
+                'allowedall'    => $this->_allowedall,
+                'arp'           => $this->_arp,
+                'manipulation'  => $this->_manipulation,
+                'user'          => $this->_user,
+                'created'       => date('c'),
+                'ip'            => $_SERVER['REMOTE_ADDR'],
+                'parent'        => $this->_parent,
+                'active'        => $this->_active,
+                'revisionnote'  => $this->_revisionnote,
+            );
 
-            // @todo see if this can be replaced this with a clone in the future
-            $newEntity = new sspmod_janus_Model_Entity;
-            $newEntity->setEid($this->_eid);
-            $newEntity->setEntityid($this->_entityid);
-            $newEntity->setRevisionid($new_revisionid);
-            $newEntity->setState($this->_workflow);
-            $newEntity->setType($this->_type);
-            $newEntity->setExpiration($this->_expiration);
-            $newEntity->setMetadataurl($this->_metadataurl);
-            $newEntity->setAllowedall($this->_allowedall);
-            $newEntity->setArp($this->_arp);
-            $newEntity->setManipulation($this->_manipulation);
-            $newEntity->setUser($this->_user);
-            $newEntity->setCreated(new \DateTime());
-            $newEntity->setIp($_SERVER['REMOTE_ADDR']);
-            $newEntity->setParent($this->_parent);
-            $newEntity->setActive($this->_active);
-            $newEntity->setRevisionnote($this->_revisionnote);
+            $tableName = self::$prefix . 'entity';
+            $insertQuery = "INSERT INTO $tableName (" . implode(',', array_keys($insertFields)) . ') '.
+                'VALUES (' . str_repeat('?,', count($insertFields)-1) . '?)';
 
-            $this->entityManager->persist($newEntity);
-            $this->entityManager->flush();
+            $st = $this->execute($insertQuery, array_values($insertFields));
+
+            if ($st === false) {
+                return false;
+            }
 
             $this->_revisionid = $new_revisionid;
 
@@ -187,24 +189,28 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         } else {
             return false;
         }
-
-        return true;
+        return $st;
     }
 
     /**
-     * Set the next free eid
+     * Return the next free eid
      *
      * @return bool True on success
      */
     private function _getNewEid()
     {
-        $newestEid = $this->_entityRepository->getNewestEid();
+        $st = $this->execute(
+            'SELECT MAX(`eid`) AS `maxeid` 
+            FROM '. self::$prefix .'entity;'
+        );
 
-        if (!$newestEid) {
+        $row = $st->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($row[0]['maxeid'] === null) {
             // First entity in system
             $this->_eid = 1;
         } else {
-            $this->_eid = $newestEid + 1;
+            $this->_eid = $row[0]['maxeid'] + 1;
         }
         return true;
     }
@@ -218,16 +224,45 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      */
     private function _newestRevision($state = null)
     {
-        $newestRevision = $this->_entityRepository->getNewestRevision($this->_eid, $state);
+        $newestRevision = $this->_loadNewestRevisionFromDatabase($this->_eid, $state);
 
-        if (is_numeric($newestRevision)) {
-            $this->_revisionid = $newestRevision;
-            return $this->_revisionid;
+        if (!is_null($newestRevision)) {
+            return $newestRevision;
         }
 
         throw new Exception(
             'JANUS:Entity:load - Could not get newest revision.'
         );
+    }
+
+    /**
+     * @param int $eid
+     * @param string|null $state
+     * @return int|null
+     */
+    private function _loadNewestRevisionFromDatabase($eid, $state = null)
+    {
+        $query = '
+            SELECT  MAX(`revisionid`) AS maxrevisionid
+            FROM    ' . self::$prefix . 'entity
+            WHERE   `eid` = ?';
+        $params = array($eid);
+
+        if(!is_null($state)) {
+            $query .= ' AND `state` = ?';
+            $params[] = $state;
+        }
+
+        $st = $this->execute($query, $params);
+        if (is_object($st)) {
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            if (is_numeric($row['maxrevisionid'])) {
+                $this->_revisionid = $row['maxrevisionid'];
+                return $this->_revisionid;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -240,15 +275,20 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      */
     private function _findEid() {
         if(isset($this->_entityid)) {
-            try {
-                $eids = $this->_entityRepository->getEid($this->_entityid);
-            } catch (Exception $ex) {
-                // @todo improve error handling, this catch is only here to mimic original behaviour
+            $st = $this->execute(
+                'SELECT DISTINCT(`eid`) 
+                FROM `'. self::$prefix .'entity` 
+                WHERE `entityid` = ?;',
+                array($this->_entityid)
+            );
+
+            if ($st === false) {
                 return 'error_db';
             }
 
-            if(count($eids) == 1) {
-                $this->_eid = $eids[0]['eid'];
+            $row = $st->fetchAll(PDO::FETCH_ASSOC);
+            if(count($row) == 1) {
+                $this->_eid = $row[0]['eid'];
             } else {
                 return 'error_entityid_not_unique';
             }
@@ -265,23 +305,22 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      * is not set or an error occures and the method returns false. If only
      * _eid is set, the newest revision will be fetched.
      *
-     * Note Previously a PDO statement was returned but since it no longer exists and was not used it is removed
+     * @return bool
      */
     public function load()
     {
-        if (!empty($this->_eid) && is_null($this->_revisionid)) {
+        if (empty($this->_eid) && isset($this->_entityid)) {
+            $this->_findEid();
+        }
+
+        if (is_null($this->_revisionid)) {
             if(empty($this->_workflow)) {
                 $this->_newestRevision();
             } else {
                 $this->_newestRevision($this->_workflow);
             }
-        } else if(isset($this->_entityid)) {
-            $res = $this->_findEid();
-            if($res === true) {
-                $res =  $this->load();
-            }
-            return $res;
         }
+
         if (empty($this->_eid) || is_null($this->_revisionid)) {
             SimpleSAML_Logger::error(
                 'JANUS:Entity:load - entityid and revisionid needs to be set.'
@@ -289,33 +328,90 @@ class sspmod_janus_Entity extends sspmod_janus_Database
             return false;
         }
 
-        /** @var $entity  sspmod_janus_Model_Entity */
-        $entity = $this->entityManager->find('sspmod_janus_Model_Entity', array(
-            'eid' => $this->_eid,
-            'revisionId' => $this->_revisionid)
-        );
-
-        if (!$entity instanceof sspmod_janus_Model_Entity) {
+        $row = $this->_loadFromCache($this->_eid, $this->_revisionid);
+        if (!$row) {
             return false;
         }
 
-        $this->_eid             = $entity->getEid();
-        $this->_entityid        = $entity->getEntityid();
-        $this->_revisionid      = $entity->getRevisionid();
-        $this->_workflow        = $entity->getState();
-        $this->_type            = $entity->getType();
-        $this->_expiration      = $entity->getExpiration();
-        $this->_metadataurl     = $entity->getMetadataUrl();
-        $this->_allowedall      = $entity->getAllowedAll();
-        $this->_parent          = $entity->getParent();
-        $this->_revisionnote    = $entity->getRevisionNote();
-        $this->_arp             = $entity->getArp();
-        $this->_user            = $entity->getUser();
-        $this->_created         = $entity->getCreated()->format(DATE_ISO8601);
-        $this->_active          = $entity->getActive();
-        $this->_manipulation    = $entity->getManipulation();
+        $this->_eid             = $row['eid'];
+        $this->_entityid        = $row['entityid'];
+        $this->_revisionid      = $row['revisionid'];
+        $this->_workflow        = $row['state'];
+        $this->_type            = $row['type'];
+        $this->_expiration      = $row['expiration'];
+        $this->_metadataurl     = $row['metadataurl'];
+        $this->_allowedall      = $row['allowedall'];
+        $this->_parent          = $row['parent'];
+        $this->_revisionnote    = $row['revisionnote'];
+        $this->_arp             = $row['arp'];
+        $this->_user            = $row['user'];
+        $this->_created         = $row['created'];
+        $this->_active          = $row['active'];
+        $this->_manipulation    = $row['manipulation'];
 
         return true;
+    }
+
+    /**
+     * @param int $eid
+     * @param int $revisionid
+     * @return bool|array
+     */
+    private function _loadFromCache($eid, $revisionid)
+    {
+        $cacheStore = SimpleSAML_Store::getInstance();
+
+        // Only cache when memcache is configured, for caching in session does not work with REST
+        // and caching database results in a database is pointless
+        $useCache = false;
+        if($cacheStore instanceof SimpleSAML_Store_Memcache) {
+            $useCache = true;
+        }
+
+        $cachedResult = null;
+        if ($useCache) {
+            // Try to get result from cache
+            $cacheKey = 'entity-' . $eid . '-' . $revisionid;
+            $cachedResult = $cacheStore->get('array', $cacheKey);
+        }
+
+        if (!is_null($cachedResult)) {
+            $row = $cachedResult;
+        } else {
+            $row = $this->_loadFromDatabase($eid, $revisionid);
+            if (!$row) {
+                return false;
+            }
+        }
+
+        if ($useCache) {
+            // Store entity in cache, note that this does not have to be flushed since a new revision
+            // will trigger a new version of the cache anyway
+            $cacheStore->set('array', $cacheKey, $row);
+        }
+
+        return $row;
+    }
+
+    /**
+     * @param int $eid
+     * @param int $revisionid
+     * @return bool|array
+     */
+    private function _loadFromDatabase($eid, $revisionid)
+    {
+        $st = $this->execute(
+            'SELECT *
+                FROM '. self::$prefix .'entity
+                WHERE `eid` = ? AND `revisionid` = ?;',
+            array($eid, $revisionid)
+        );
+
+        if ($st === false) {
+            return false;
+        }
+
+        return $st->fetch(PDO::FETCH_ASSOC);
     }
 
 
@@ -631,29 +727,74 @@ class sspmod_janus_Entity extends sspmod_janus_Database
         $metadatafields = $mb->getMetadatafields();
 
         if(!is_null($fieldname)) {
+            $cacheStore = SimpleSAML_Store::getInstance();
 
-            $metadata = $this->entityManager
-                ->getRepository('sspmod_janus_Model_Entity_Metadata')
-                ->findOneBy(
-                    array(
-                        'eid' => $this->_eid,
-                        'key' => $fieldname,
-                        'revisionId' => $this->_revisionid
-                    )
-                );
+            // Only cache when memcache is configured, for caching in session does not work with REST
+            // and caching database results in a database is pointless
+            $useCache = false;
+            if($cacheStore instanceof SimpleSAML_Store_Memcache) {
+                $useCache = true;
+            }
 
-            if(!$metadata instanceof sspmod_janus_Model_Entity_Metadata) {
+            $eid = $this->_eid;
+            $revisionId = $this->_revisionid;
+
+            $cachedResult = null;
+            if ($useCache) {
+                // Try to get result from cache
+                $cacheKey = 'entity-prettyname' . $eid . '-' . $revisionId;
+                $cachedResult = $cacheStore->get('array', $cacheKey);
+            }
+
+            if (!is_null($cachedResult)) {
+                $rows = $cachedResult;
+            } else {
+                $rows = $this->_loadPrettyNameFromDatabase($eid, $revisionId, $fieldname);
+                if (!is_array($rows)) {
+                    return false;
+                }
+            }
+
+            if ($useCache) {
+                // Store entity pretty nane in cache, note that this does not have to be flushed since a new revision
+                // will trigger a new version of the cache anyway
+                $cacheStore->set('array', $cacheKey, $rows);
+            }
+
+            if(empty($rows)) {
                 $this->_prettyname =  $this->_entityid;
-            } else if(isset($metadatafields[$fieldname]->default) && $metadatafields[$fieldname]->default == $metadata->getValue()) {
+            } else if(isset($metadatafields[$fieldname]->default) && $metadatafields[$fieldname]->default == $rows[0]['value']) {
                 $this->_prettyname =  $this->_entityid; 
             } else {
-                $this->_prettyname = $metadata->getValue();
+                $this->_prettyname = $rows[0]['value'];
             }
         } else {
             $this->_prettyname =  $this->_entityid;
         }
 
         return $this->_prettyname;
+    }
+
+    /**
+     * @param int $eid
+     * @param int $revisionId
+     * @param string $fieldName
+     * @return array|bool
+     */
+    private function _loadPrettyNameFromDatabase($eid, $revisionId, $fieldName)
+    {
+        $st = $this->execute('
+                SELECT t1.value AS value
+                FROM '. self::$prefix .'metadata AS t1
+                WHERE t1.eid = ? AND t1.key = ? AND t1.revisionid = ?;',
+            array($eid, $fieldName, $revisionId)
+        );
+
+        if ($st === false) {
+            return false;
+        }
+
+        return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getUser() {
