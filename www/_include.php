@@ -8,8 +8,11 @@ bootstrapProfiler();
  */
 function bootstrapProfiler() {
     $profiler = new \Lvl\Profiler();
+
     $profiler->setLogCallback(function($message) {
-        SimpleSAML_Logger::info($message);
+        // log level debug is chosen because otherwise log requires session to be instantiated which will fail if it's done
+        // on shutdown since it will try to send a header after content.
+        SimpleSAML_Logger::debug($message);
     });
     $profiler->startBlock('app');
 
