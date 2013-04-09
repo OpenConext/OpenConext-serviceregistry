@@ -13,19 +13,16 @@ define('JANUS_FIELDS_TYPE_SP'  , 'saml20-sp');
  */
 
 $samlBindings = array(
-    'urn:oasis:names:tc:SAML:2.0:profiles:holder-of-key:SSO:browser',
-    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-    'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
+    // From 'Bindings for the OASIS Security Assertion Markup Language (SAML) V2.0'
     'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+    'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
     'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
-    // URI is not defined anywhere as binding? 
     'urn:oasis:names:tc:SAML:2.0:bindings:URI',
-    'urn:oasis:names:tc:SAML:1.0:profiles:artifact-01',
-    'urn:oasis:names:tc:SAML:1.0:profiles:browser-post',
-    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign'
+    // From 'SAMLv2.0 HTTP POST "SimpleSign" Binding'
+    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign',
 );
-
 
 $template = array(
     // Fields for ALL entities (both Service Provider and Identity Provider)
