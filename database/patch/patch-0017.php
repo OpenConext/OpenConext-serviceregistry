@@ -19,7 +19,7 @@ $userController->setUser('engine');
 $entities = $userController->getEntities();
 /** @var sspmod_janus_Entity $entity */
 foreach ($entities as $entity) {
-    $entity->setRevisionnote('patch-0017.php: update MDUI/UIInfo metadata fields (BACKLOG-974)');
+    $entity->setRevisionnote('patch-0017.php: update MDUI/UIInfo/ACS metadata fields (BACKLOG-974)');
 
     $entityController = new sspmod_janus_EntityController($janusConfig);
     $entityController->setEntity($entity);
@@ -54,6 +54,21 @@ foreach ($entities as $entity) {
         if('logo:0:height' === $md->getKey()) {
             $entityController->addMetadata('UIInfo:Logo:0:height', $md->getValue());
             $entityController->removeMetadata('logo:0:height');
+        }
+        // remove all unsupported ACS Bindings from the metadata
+        if(0 === strpos($md->getKey(), 'AssertionConsumerService:')) {
+            $e = explode(":", $md->getKey());
+            if (3 === count($e) && $e[2] === "Binding") {
+                $index = $e[1];
+                $supportedSamlBindings = $janusConfig->getArray("supported-saml-bindings");
+                if (!in_array($md->getValue(), $supportedSamlBindings)) {
+                    // need to remove this ACS completely
+                    echo "[INFO] removing unsupported binding '" . $md->getValue() . "' from entity '" . $entity->getEntityid() . "'" . PHP_EOL;
+                    $entityController->removeMetadata("AssertionConsumerService:$index:Binding");
+                    $entityController->removeMetadata("AssertionConsumerService:$index:Location");
+                    $entityController->removeMetadata("AssertionConsumerService:$index:index");
+                }
+            }
         }
     }
     $entityController->saveEntity();
