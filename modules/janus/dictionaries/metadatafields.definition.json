@@ -89,7 +89,7 @@
     "NameIDFormat": {
         "en": "NameID supported by this connection."
     },
-    "displayName": {
+    "UIInfo_DisplayName": {
         "en": "The display name for this connection, overrides the 'name' in WAYFs."
     },
     "coin_gadgetbaseurl": {
