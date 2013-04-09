@@ -843,7 +843,7 @@ if($this->data['entity']->getType() == 'saml20-idp' || $this->data['entity']->ge
             switch($metadata_field->type) {
                 case 'text':
                     $validate = isset($metadata_field->validate) ? 'onkeyup="validateInput(this, \'' . $metadata_field->validate . '\');"' : '';
-                    echo '<input class="width_100" type="text" name="edit-metadata-'. $data->getKey()  .'" value="'. htmlentities($data->getValue())  .'" ' . $modifymetadata . ' ' . $validate . ' />';
+                    echo '<input class="width_100" type="text" name="edit-metadata-'. $data->getKey()  .'" value="'. htmlentities($data->getValue(),ENT_QUOTES,"UTF-8")  .'" ' . $modifymetadata . ' ' . $validate . ' />';
                     break;
                 case 'boolean':
                     if($data->getValue() == true) {
