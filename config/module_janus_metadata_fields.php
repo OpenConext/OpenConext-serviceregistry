@@ -12,7 +12,7 @@ define('JANUS_FIELDS_TYPE_SP'  , 'saml20-sp');
  *      default_allow = FALSE (unless you set a default, in which case this is TRUE by default)
  */
 
-$samlBindings = array(
+$supportedSamlBindings = array(
     // From 'Bindings for the OASIS Security Assertion Markup Language (SAML) V2.0'
     'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
     'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
@@ -80,7 +80,7 @@ $template = array(
         // Endpoint fields
         'SingleSignOnService:0:Binding' => array(
             'type' => 'select',
-            'select_values' => $samlBindings,
+            'select_values' => $supportedSamlBindings,
             'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
             'required' => TRUE,
         ),
@@ -110,13 +110,13 @@ $template = array(
         # Must have at least 1 binding
         'AssertionConsumerService:0:Binding' => array(
             'type' => 'select',
-            'select_values' => $samlBindings,
+            'select_values' => $supportedSamlBindings,
             'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             'required' => TRUE,
         ),
         'AssertionConsumerService:#:Binding' => array(
             'type' => 'select',
-            'select_values' => $samlBindings,
+            'select_values' => $supportedSamlBindings,
             'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             'required' => FALSE,
             'supported' => array(1,2,3,4,5,6,7,8,9),
@@ -198,6 +198,7 @@ $fieldTemplates = new sspmod_janus_fieldsTemplates($template);
 $fields = array(
     'metadatafields.saml20-idp' => $fieldTemplates->getIdpFields(),
     'metadatafields.saml20-sp'  => $fieldTemplates->getSpFields(),
+    'supported-saml-bindings'   => $supportedSamlBindings,
 );
 
 /**

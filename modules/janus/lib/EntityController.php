@@ -680,6 +680,19 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
                 }
         }
 
+        // remove all non-SAML 2.0 or non-standard ACS bindings
+        if(isset($parsedmetadata['AssertionConsumerService']) && is_array($parsedmetadata['AssertionConsumerService'])) {
+            $supportedSamlBindings = $this->_config->getArray("supported-saml-bindings");
+
+            foreach($parsedmetadata['AssertionConsumerService'] as $k => $v) {
+                if(isset($v['Binding']) && !in_array($v['Binding'], $supportedSamlBindings)) {
+                    unset($parsedmetadata['AssertionConsumerService'][$k]);
+                }
+            }
+            // fix array indexes
+            $parsedmetadata['AssertionConsumerService'] = array_values($parsedmetadata['AssertionConsumerService']);
+        }
+
         $parsedmetadata = self::arrayFlattenSep(':', $parsedmetadata);
 
         if (isset($parsedmetadata['keys:0:X509Certificate'])) {
