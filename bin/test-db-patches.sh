@@ -8,6 +8,8 @@ export APPLICATION_ENV="dbtest"
 # Fill in correct credentials here
 dbUser=""
 dbPass=""
+dbName="serviceregistry"
+dbNameTest="serviceregistry_test"
 dbCredentials=" -u${dbUser} -p${dbPass}"
 
 currentDir=`pwd`
@@ -18,8 +20,8 @@ migrateCommand="${currentDir}/bin/migrate"
 echo 'Test patches against base install'
 
 # Create test database
-echo "DROP DATABASE IF EXISTS serviceregistry_test;" | ${mysqlCommand}
-echo "CREATE DATABASE serviceregistry_test;" | ${mysqlCommand}
+echo "DROP DATABASE IF EXISTS ${dbNameTest};" | ${mysqlCommand}
+echo "CREATE DATABASE ${dbNameTest};" | ${mysqlCommand}
 
 # Run migrate scripts note that the first script actually creates the database structure
 ${migrateCommand}
@@ -29,15 +31,15 @@ echo 'Test patches against real database'
 exportFile="/tmp/serviceregistry-export.sql"
 
 # Export Serviceregistry database
-mysqldump ${dbCredentials} serviceregistry > ${exportFile}
+mysqldump ${dbCredentials} ${dbName} > ${exportFile}
 
 # Create test database
-echo "DROP DATABASE IF EXISTS serviceregistry_test;" | ${mysqlCommand}
-echo "CREATE DATABASE serviceregistry_test;" | ${mysqlCommand}
+echo "DROP DATABASE IF EXISTS ${dbNameTest};" | ${mysqlCommand}
+echo "CREATE DATABASE ${dbNameTest};" | ${mysqlCommand}
 
 #Import export in testdatabase
-${mysqlCommand} serviceregistry_test < ${exportFile}
+${mysqlCommand} ${dbNameTest} < ${exportFile}
 
-#echo "DELETE FROM serviceregistry_test.db_changelog WHERE patch_number = 16;" | ${mysqlCommand}
+#echo "DELETE FROM ${dbNameTest}.db_changelog WHERE patch_number = 16;" | ${mysqlCommand}
 
 ${migrateCommand}
