@@ -577,3 +577,10 @@ if (!file_exists($localConfig)) {
     die('No local JANUS config file at ' . $localConfig);
 }
 require $localConfig;
+
+/**
+ * Workaround to be able to override the database name for testing patches on every install
+ */
+if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] === 'dbtest') {
+    $config['store']['dsn'] = preg_replace('/dbname=.*/', 'dbname=serviceregistry_test', $config['store']['dsn']);
+}

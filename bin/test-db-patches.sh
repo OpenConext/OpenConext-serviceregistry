@@ -1,0 +1,43 @@
+#!/bin/sh
+export PHP_IDE_CONFIG="serverName=serviceregistry.demo.openconext.org"
+export XDEBUG_CONFIG="idekey=PhpStorm, remote_connect_back=0, remote_host=172.18.5.1"
+
+export APPLICATION_ENV="dbtest"
+
+@todo improve this sometime
+# Fill in correct credentials here
+dbUser=""
+dbPass=""
+dbCredentials=" -u${dbUser} -p${dbPass}"
+
+currentDir=`pwd`
+mysqlCommand="mysql ${dbCredentials}"
+migrateCommand="${currentDir}/bin/migrate"
+
+# @todo see if some data can be provisioned
+echo 'Test patches against base install'
+
+# Create test database
+echo "DROP DATABASE IF EXISTS serviceregistry_test;" | ${mysqlCommand}
+echo "CREATE DATABASE serviceregistry_test;" | ${mysqlCommand}
+
+# Run migrate scripts note that the first script actually creates the database structure
+${migrateCommand}
+
+echo 'Test patches against real database'
+
+exportFile="/tmp/serviceregistry-export.sql"
+
+# Export Serviceregistry database
+mysqldump ${dbCredentials} serviceregistry > ${exportFile}
+
+# Create test database
+echo "DROP DATABASE IF EXISTS serviceregistry_test;" | ${mysqlCommand}
+echo "CREATE DATABASE serviceregistry_test;" | ${mysqlCommand}
+
+#Import export in testdatabase
+${mysqlCommand} serviceregistry_test < ${exportFile}
+
+#echo "DELETE FROM serviceregistry_test.db_changelog WHERE patch_number = 16;" | ${mysqlCommand}
+
+${migrateCommand}
