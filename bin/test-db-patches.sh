@@ -40,6 +40,4 @@ echo "CREATE DATABASE ${dbNameTest};" | ${mysqlCommand}
 #Import export in testdatabase
 ${mysqlCommand} ${dbNameTest} < ${exportFile}
 
-#echo "DELETE FROM ${dbNameTest}.db_changelog WHERE patch_number = 16;" | ${mysqlCommand}
-
 ${migrateCommand}
