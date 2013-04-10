@@ -2,6 +2,7 @@
 export PHP_IDE_CONFIG="serverName=serviceregistry.demo.openconext.org"
 export XDEBUG_CONFIG="idekey=PhpStorm, remote_connect_back=0, remote_host=172.18.5.1"
 
+# Application env is used in the PHP config file to overwrite the database name
 export APPLICATION_ENV="dbtest"
 
 @todo improve this sometime
