@@ -503,10 +503,13 @@ class sspmod_janus_REST_Methods
         $metadata = $entityController->getMetadata();
 
         // in case we ask for some keys... we need to apply the key mapping
-        $keys = array_map(function($key) {
-            $mapping = self::mapMetadataKeys();
-            return array_key_exists($key, $mapping) ? $mapping[$key] : $key;
-        }, $keys);
+        $keys = array_map(
+            function ($key) {
+                $mapping = self::mapMetadataKeys();
+                return array_key_exists($key, $mapping) ? $mapping[$key] : $key;
+            },
+            $keys
+        );
 
         $result = array();
         foreach($metadata AS $meta) {;
