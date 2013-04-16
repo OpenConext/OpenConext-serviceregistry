@@ -24,6 +24,7 @@ foreach ($entities as $entity) {
     $entityController = new sspmod_janus_EntityController($janusConfig);
     $entityController->setEntity($entity);
 
+    $entityController->getAllowedEntities();
     $metadata = $entityController->getMetadata();
 
     foreach($metadata as $md) {
