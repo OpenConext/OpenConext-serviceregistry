@@ -25,6 +25,7 @@ foreach ($entities as $entity) {
     $entityController->setEntity($entity);
 
     $entityController->getAllowedEntities();
+    $entityController->getBlockedEntities();
     $entityController->getDisableConsent();
 
     $metadata = $entityController->getMetadata();
