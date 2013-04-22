@@ -23,10 +23,7 @@ foreach ($entities as $entity) {
 
     $entityController = new sspmod_janus_EntityController($janusConfig);
     $entityController->setEntity($entity);
-
-    $entityController->getAllowedEntities();
-    $entityController->getBlockedEntities();
-    $entityController->getDisableConsent();
+    $entityController->loadEntity();
 
     $metadata = $entityController->getMetadata();
 
