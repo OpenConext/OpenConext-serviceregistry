@@ -175,5 +175,8 @@
     },
     "keywords": {
         "en": "Space separated list of keywords users can search on in the WAYF screen"
+    },
+    "coin_attribute_name_format": {
+        "en": "'Default': output of both urn:oid and urn:mace attributes.<br>'urn:mace': when possible only output of urn:mace attributes.<br>'urn:oid' when possible only output of urn:oid attributes (not implemented)."
     }
 }
