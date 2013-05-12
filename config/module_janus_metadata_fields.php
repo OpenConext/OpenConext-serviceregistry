@@ -197,7 +197,14 @@ $template = array(
         'coin:provide_is_member_of'     => array('type' => 'boolean', 'default' => FALSE),
         'coin:implicit_vo_id'           => array(),
 
-        'coin:transparant_issuer'       => array('type' => 'boolean')
+        'coin:transparant_issuer'       => array('type' => 'boolean'),
+
+        'coin:attribute_name_format' => array(
+            'type' => 'select',
+            'required' => FALSE,
+            'select_values' => array('Default', 'urn:mace'),
+            'default' => 'Default',
+        )
     ),
 );
 
