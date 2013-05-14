@@ -202,7 +202,7 @@ $template = array(
         'coin:attribute_name_format' => array(
             'type' => 'select',
             'required' => FALSE,
-            'select_values' => array('Default', 'urn:mace'),
+            'select_values' => array('Default', 'urn:mace', 'urn:oid'),
             'default' => 'Default',
         )
     ),
