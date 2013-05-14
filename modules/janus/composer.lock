@@ -1,6 +1,32 @@
 {
-    "hash": "bd89c7ca6fb444b4c50c10648adf9bfc",
+    "hash": "fea9277f146d391a5d6f7d33a142401b",
     "packages": [
+        {
+            "name": "beberlei/DoctrineExtensions",
+            "version": "v0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/DoctrineExtensions.git",
+                "reference": "v0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/beberlei/DoctrineExtensions/zipball/v0.1",
+                "reference": "v0.1",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "DoctrineExtensions": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2012-05-16 00:04:34"
+        },
         {
             "name": "doctrine/common",
             "version": "2.3.0",
@@ -55,7 +81,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -72,16 +98,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "2.3.3"
+                "reference": "2.3.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2.3.3",
-                "reference": "2.3.3",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2.3.4",
+                "reference": "2.3.4",
                 "shasum": ""
             },
             "require": {
@@ -131,20 +157,20 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2013-03-24 19:16:29"
+            "time": "2013-05-11 07:45:37"
         },
         {
             "name": "doctrine/orm",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "2.3.3"
+                "reference": "2.3.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/2.3.3",
-                "reference": "2.3.3",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/2.3.4",
+                "reference": "2.3.4",
                 "shasum": ""
             },
             "require": {
@@ -201,7 +227,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2013-03-24 20:43:58"
+            "time": "2013-05-11 07:51:12"
         },
         {
             "name": "pimple/pimple",
@@ -251,17 +277,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.2.0",
+            "version": "v2.2.1",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "v2.2.0"
+                "reference": "v2.2.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/v2.2.0",
-                "reference": "v2.2.0",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/v2.2.1",
+                "reference": "v2.2.1",
                 "shasum": ""
             },
             "require": {
@@ -294,28 +320,80 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2013-03-01 06:43:14"
+            "time": "2013-03-19 20:48:08"
         }
     ],
     "packages-dev": [
+        {
+            "name": "jlogsdon/cli",
+            "version": "v0.9.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lucasvanlierop/php-cli-tools.git",
+                "reference": "v0.9.1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lucasvanlierop/php-cli-tools/zipball/v0.9.1.1",
+                "reference": "v0.9.1.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "cli": "lib/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Logsdon",
+                    "email": "jlogsdon@php.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Console utilities for PHP",
+            "homepage": "http://github.com/jlogsdon/php-cli-tools",
+            "keywords": [
+                "cli",
+                "console"
+            ],
+            "support": {
+                "source": "https://github.com/lucasvanlierop/php-cli-tools/tree/master"
+            },
+            "time": "2013-04-12 12:59:18"
+        },
         {
             "name": "lucasvanlierop/php-profiler",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lucasvanlierop/php-profiler.git",
-                "reference": "a1d0c2547a791b4e1014cdc980d1e22fe1173378"
+                "reference": "82a7b7770bbc7221d4de02b07402bc6a186544f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lucasvanlierop/php-profiler/zipball/a1d0c2547a791b4e1014cdc980d1e22fe1173378",
-                "reference": "a1d0c2547a791b4e1014cdc980d1e22fe1173378",
+                "url": "https://api.github.com/repos/lucasvanlierop/php-profiler/zipball/82a7b7770bbc7221d4de02b07402bc6a186544f9",
+                "reference": "82a7b7770bbc7221d4de02b07402bc6a186544f9",
                 "shasum": ""
             },
+            "require": {
+                "jlogsdon/cli": "v0.9.1.1"
+            },
             "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Lvl\\Profiler\\": "lib"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "description": "A basic php profiler",
-            "time": "2013-02-11 16:15:27"
+            "time": "2013-04-25 10:04:31"
         }
     ],
     "aliases": [

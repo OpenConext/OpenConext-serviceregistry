@@ -4,7 +4,8 @@
     "minimum-stability": "stable",
     "require" : {
         "pimple/pimple" : "dev-master",
-        "doctrine/orm": "*"
+        "doctrine/orm": "*",
+        "beberlei/DoctrineExtensions" : "*"
     },
     "require-dev": {
         "lucasvanlierop/php-profiler": "dev-master"

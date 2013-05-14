@@ -83,6 +83,8 @@ class sspmod_janus_AdminUtil extends sspmod_janus_Database
         $state = (array)$state;
         $type  = (array)$type;
 
+        // @todo call new repo method
+
         $whereClauses = array(
             '`active` = ?'
         );

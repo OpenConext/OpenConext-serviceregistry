@@ -1,6 +1,9 @@
 <?php
 use Doctrine\ORM\EntityRepository;
 
+use DoctrineExtensions\Query\Mysql\IfNull;
+
+
 class sspmod_janus_Model_Entity_Repository extends EntityRepository
 {
     /**
@@ -83,5 +86,87 @@ class sspmod_janus_Model_Entity_Repository extends EntityRepository
         $builder->setParameter('eid', $eid);
 
         return (int) $builder->getQuery()->getSingleScalarResult();
+    }
+
+    public function getCollectionByStateAndType($active, array $state, array $type, $eid, $config)
+    {
+        $builder = $this->_em->createQueryBuilder();
+        $builder
+            ->select(
+                array(
+                    'DISTINCT Entity.eid',
+                    'Entity.revisionId',
+                    'Entity.created',
+                    'Entity.state',
+                    'Entity.type',
+                    'IFNULL(Metadata.value, Entity.entityId) AS `orderfield`'
+                )
+            )
+            ->from('sspmod_janus_Model_Entity', 'Entity')
+            ->where('active', ':active')
+            ->setParameter('active', $active)
+            // Select entity (only last revision)
+            ->andWhere(
+                'Entity.revisionId',
+                $builder
+                    ->select($builder->expr()->max('EntityRevision.revisionId'))
+                    ->from('entity', 'EntityRevision')
+                    ->andWhere('EntityRevision.eid = Entity.eid')
+                    ->groupBy('EntityRevision.eid')
+            )
+            ->orderBy('created', 'ASC');
+
+        if (!empty($state)) {
+            $builder->andWhere($builder->expr()->in('state', $state));
+        }
+
+        if (!empty($type)) {
+            $builder->andWhere($builder->expr()->in('type', $type));
+        }
+
+        // Find default value for sort field so it can be excluded
+        /** @var $sortFieldName string */
+        $sortFieldName = $this->_config->getString('entity.prettyname', NULL);
+        // Try to sort results by pretty name from metadata
+        if ($sortFieldName) {
+            $fieldDefaultValue = $this->getDefaultOrderFieldFromConfig($config, $sortFieldName);
+            // @todo check this if
+            if (!empty($fieldDefaultValue)) {
+                $builder->leftJoin(
+                    'metadata',
+                    'Metadata',
+                    'ON',
+                    'Metadata.key = :fieldDefaultValue
+                        AND Metadata.eid = Entity.eid
+                        AND Metadata.revisionId = Entity.revisionId
+                        AND Metadata.value != :sortFieldName'
+                )
+                ->setParameter(':fieldDefaultValue', $fieldDefaultValue)
+                ->setParameter(':sortFieldName', $sortFieldName)
+                // Override order
+                ->orderBy('orderField', 'ASC');
+            }
+        }
+//
+//        if ($st === false) {
+//            SimpleSAML_Logger::error('JANUS: Error fetching all entities');
+//            return false;
+//        }
+//
+//        $rs = $st->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+    private function getDefaultOrderFieldFromConfig(Zend_Config $config, $sortFieldName)
+    {
+        if ($sortFieldDefaultValue = $config->getArray('metadatafields.saml20-idp', FALSE)) {
+            if (isset($sortFieldDefaultValue[$sortFieldName])) {
+                return $sortFieldDefaultValue[$sortFieldName]['default'];
+            }
+        } else if ($sortFieldDefaultValue = $config->getArray('metadatafields.saml20-sp', FALSE)) {
+            if (isset($sortFieldDefaultValue[$sortFieldName])) {
+                return $sortFieldDefaultValue[$sortFieldName]['default'];
+            }
+        }
     }
 }
