@@ -566,6 +566,7 @@ $this->data['translations']['text_disable_entity'] = $this->t('text_disable_enti
 $this->data['translations']['text_enable_entity'] = $this->t('text_enable_entity');
 $this->data['translations']['text_delete_entity'] = $this->t('text_delete_entity');
 $pageJs[] = <<<JAVASCRIPT_SUBTAB_ADMIN_ENTITIES
+// @todo change this since it will not work with same entityid for both sp and idp
 function disableEntity(eid, entityid) {
     if(confirm("{$this->data['translations']['text_disable_entity']}: " + entityid)) {
         $.post(
@@ -590,6 +591,7 @@ function disableEntity(eid, entityid) {
     }
 }
 
+// @todo change this since it will not work with same entityid for both sp and idp
 function enableEntity(eid, entityid) {
     if(confirm("{$this->data['translations']['text_enable_entity']}: " + entityid)) {
         $.post(
@@ -614,6 +616,7 @@ function enableEntity(eid, entityid) {
     }
 }
 
+// @todo change this since it will not work with same entityid for both sp and idp
 function deleteEntity(eid, entityid) {
     if(confirm("{$this->data['translations']['text_delete_entity']}: " + entityid)) {
         $.post(
@@ -733,6 +736,7 @@ if ($this->data['selectedtab'] == SELECTED_TAB_ENTITIES) {
 
     if($this->data['uiguard']->hasPermission('createnewentity', null, $this->data['user']->getType(), TRUE)) {
     ?>
+    <?php // @todo change this since it will not work with same entityid for both sp and idp ?>
     <a class="janus_button" onclick="$('#options').toggle('fast');  $('#options input[name=\'entityid\']').focus();"><?php echo $this->t('text_entities_create'); ?></a>
     <form method="post" action="<?php echo FORM_ACTION_URL;?>">
         <table border="0" id="options" class="frontpagebox" <?php if (!isset($this->data['msg'])) echo 'style="display: none;"'; ?>>

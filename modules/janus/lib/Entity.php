@@ -272,7 +272,9 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      * If the entityID is supplied, the eid will be found unless multiple eid's 
      * is returnd for the same entityID
      *
-     * @return bool true if eid is found else false 
+     * @return bool true if eid is found else false
+     *
+     * @todo change this since it will not work with same entityid for both sp and idp
      */
     private function _findEid() {
         if(isset($this->_entityid)) {
@@ -310,6 +312,7 @@ class sspmod_janus_Entity extends sspmod_janus_Database
      */
     public function load()
     {
+        // @todo change this since it will not work with same entityid for both sp and idp
         if (empty($this->_eid) && isset($this->_entityid)) {
             $this->_findEid();
         }

@@ -55,6 +55,7 @@ JOIN (
         SELECT MAX(revisionid) 
         FROM $entityTable
         WHERE eid = e.eid
+        -- @todo change this since it will not work with same entityid for both sp and idp
     )) entities ON be.remoteentityid = entities.entityid
 ");
 
@@ -114,6 +115,7 @@ JOIN (
         SELECT MAX(revisionid) 
         FROM $entityTable
         WHERE eid = e.eid
+        -- @todo change this since it will not work with same entityid for both sp and idp
     )) entities ON be.remoteentityid = entities.entityid
 ");
 

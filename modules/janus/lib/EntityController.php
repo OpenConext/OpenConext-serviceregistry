@@ -107,6 +107,8 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
      * previous revision
      *
      * @return sspmod_janus_Entity|false|null Returns the entity or false on error
+     *
+     * @todo change this since it will not work with same entityid for both sp and idp
      */
     public function &setEntity($entity, $revisionid = null)
     {
@@ -137,6 +139,7 @@ class sspmod_janus_EntityController extends sspmod_janus_Database
         if (ctype_digit($id)) {
             $entity->setEid($id);
         } else {
+            // @todo change this since it will not work with same entityid for both sp and idp
             $entity->setEntityid($id);
         }
 

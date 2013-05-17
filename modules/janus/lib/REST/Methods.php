@@ -53,6 +53,7 @@ class sspmod_janus_REST_Methods
      */
     public static function method_arp($data, &$statusCode)
     {
+        // @todo change this since it will not work with same entityid for both sp and idp
         if (!isset($data['entityid'])) {
             $statusCode = 400;
             return '';
@@ -64,6 +65,7 @@ class sspmod_janus_REST_Methods
         }
         
         $entityController = new sspmod_janus_EntityController(SimpleSAML_Configuration::getConfig('module_janus.php'));
+        // @todo change this since it will not work with same entityid for both sp and idp
         $entityController->setEntity($data['entityid'], $revisionId);
     
         $arp = $entityController->getArp();
@@ -124,6 +126,7 @@ class sspmod_janus_REST_Methods
      * @return array|string Entity information
      */
     public static function method_getEntity($data, &$statusCode) {
+        // @todo change this since it will not work with same entityid for both sp and idp
         if (!isset($data["entityid"])) {
             $statusCode = 400;
             return '';
@@ -135,6 +138,7 @@ class sspmod_janus_REST_Methods
         }
 
         $entityController = new sspmod_janus_EntityController(SimpleSAML_Configuration::getConfig('module_janus.php'));
+        // @todo change this since it will not work with same entityid for both sp and idp
         $entity = $entityController->setEntity($data['entityid'], $revisionId);
 
         $result = array();
@@ -169,6 +173,7 @@ class sspmod_janus_REST_Methods
      */
     public static function method_getMetadata($data, &$statusCode)
     {
+        // @todo change this since it will not work with same entityid for both sp and idp
         if (!isset($data["entityid"])) {
             $statusCode = 400;
             return '';
@@ -186,6 +191,7 @@ class sspmod_janus_REST_Methods
 
 
         $entityController = new sspmod_janus_EntityController(SimpleSAML_Configuration::getConfig('module_janus.php'));
+        // @todo change this since it will not work with same entityid for both sp and idp
         $entityController->setEntity($data["entityid"], $revisionId);
         $entity = $entityController->getEntity();
 
