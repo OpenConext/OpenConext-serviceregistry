@@ -452,6 +452,7 @@ if(!empty($_POST)) {
     // Set user
     $entity->setUser($user->getUid());
 
+    // @todo this should be in a language file
     $norevision = array(
         'da' => 'Ingen revisionsnote',
         'en' => 'No revision note',
