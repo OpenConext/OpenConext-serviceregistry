@@ -35,6 +35,23 @@ $template = array(
         'certData'                  => array(),
         'certData2'                 => array(),
 
+        'SingleLogoutService_Binding' => array(
+            'type' => 'select',
+            'select_values' => array(
+                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
+                'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
+                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
+                'urn:oasis:names:tc:SAML:2.0:bindings:URI'
+            ),
+            'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'required'=>FALSE,
+        ),
+        'SingleLogoutService_Location' => array(
+            'required'=>FALSE,
+            'validate' => 'isurl'
+        ),
         'NameIDFormat' => array(
             'type' => 'select',
             'required'=>FALSE,
@@ -85,6 +102,20 @@ $template = array(
             'required' => TRUE,
         ),
         'SingleSignOnService:0:Location' => array('required' => TRUE, 'validate' => 'isurl'),
+        'SingleSignOnService:1:Binding' => array(
+            'type' => 'select',
+            'select_values' => array(
+                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                'urn:oasis:names:tc:SAML:2.0:bindings:SOAP',
+                'urn:oasis:names:tc:SAML:2.0:bindings:PAOS',
+                'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
+                'urn:oasis:names:tc:SAML:2.0:bindings:URI'
+            ),
+            'default' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'required' => FALSE,
+        ),
+        'SingleSignOnService:1:Location' => array('required' => FALSE, 'validate' => 'isurl'),
         'certData'                  => array('required'=>TRUE),
 
         'coin:guest_qualifier' => array(
@@ -190,7 +221,8 @@ $template = array(
         'coin:provide_is_member_of'     => array('type' => 'boolean', 'default' => FALSE),
         'coin:implicit_vo_id'           => array(),
 
-        'coin:transparant_issuer'       => array('type' => 'boolean')
+        'coin:transparant_issuer'       => array('type' => 'boolean'),
+        'coin:do_not_add_attribute_aliases' => array('type' => 'boolean', 'default' => FALSE)
     ),
 );
 
