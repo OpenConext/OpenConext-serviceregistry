@@ -43,6 +43,7 @@
         "jquery/jquery-ui-themes":"1.10.1"
     },
     "require-dev":{
-        "phpmd/phpmd" : "1.4.*"
+        "phpmd/phpmd" : "1.4.*",
+        "fabpot/php-cs-fixer":"*"
     }
 }
