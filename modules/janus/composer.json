@@ -41,5 +41,8 @@
         "jquery/jquery":"1.9.1",
         "jquery/jquery-ui":"1.10.1",
         "jquery/jquery-ui-themes":"1.10.1"
+    },
+    "require-dev":{
+        "phpmd/phpmd" : "1.4.*"
     }
 }
