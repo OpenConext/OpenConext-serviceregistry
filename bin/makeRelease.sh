@@ -27,6 +27,9 @@ else
     TAG=$1
 fi
 
+tarFile=${PROJECT_NAME}-${TAG}.tar.gz
+tarFile=`echo $tarFile | sed s/\\\//-/`
+
 mkdir -p ${RELEASE_DIR}
 rm -rf ${RELEASE_DIR}/${PROJECT_NAME}
 
@@ -68,10 +71,6 @@ rm -rf ${RELEASE_DIR}/${PROJECT_NAME}/simplesamlphp_patches
 # create tarball
 (
 cd ${RELEASE_DIR}
-
-tarFile=${PROJECT_NAME}-${TAG}.tar.gz
-tarFile=`echo $tarFile | sed s/\\\//-/`
-
 tar -czf $tarFile ${PROJECT_NAME}
 )
 
