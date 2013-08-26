@@ -69,13 +69,16 @@ rm -rf ${RELEASE_DIR}/${PROJECT_NAME}/simplesamlphp_patches
 (
 cd ${RELEASE_DIR}
 
-tar -czf ${PROJECT_NAME}-${TAG}.tar.gz ${PROJECT_NAME}
+tarFile=${PROJECT_NAME}-${TAG}.tar.gz
+tarFile=`echo $tarFile | sed s/\\\//-/`
+
+tar -czf $tarFile ${PROJECT_NAME}
 )
 
 # create checksum file
 (
 cd ${RELEASE_DIR}
-shasum ${PROJECT_NAME}-${TAG}.tar.gz > ${PROJECT_NAME}.sha
+shasum $tarFile > ${PROJECT_NAME}.sha
 )
 
 # sign it if requested
